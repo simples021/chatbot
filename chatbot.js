@@ -1,10 +1,10 @@
 const qrcode = require('qrcode-terminal');
-const { Client, Buttons, List, MessageMedia, LocalAuth } = require('whatsapp-web.js');
+const { Client, LocalAuth } = require('whatsapp-web.js');
 
 let client;
-let botRunning = false;
+let botRunning = false; 
 
-// Função para inicializar o bot
+
 function startBot() {
   if (botRunning) {
     console.log('⚠️ O chatbot já está em execução.');
@@ -31,7 +31,7 @@ function startBot() {
   });
 
   client.on('message', async (msg) => {
-    if (msg.body.match(/(menu|Menu|dia|tarde|noite|oi|Oi|Olá|olá|ola|Ola)/i) && msg.from.endsWith('@c.us')) {
+       if (msg.body.match(/(menu|Menu|dia|tarde|noite|oi|Oi|Olá|olá|ola|Ola)/i) && msg.from.endsWith('@c.us')) {
         const chat = await msg.getChat();
 
         await delay(3000); // Delay de 3 segundos
@@ -178,7 +178,6 @@ function startBot() {
   client.initialize();
 }
 
-// Função para parar o bot
 function stopBot() {
   if (!botRunning) {
     console.log('⚠️ O chatbot já está parado.');
@@ -199,8 +198,12 @@ function stopBot() {
       });
   }
 }
+function restartBot() {
+  console.log('🔄 Reiniciando o chatbot...');
+  stopBot();
+  setTimeout(() => {
+    startBot();
+  }, 1000); 
+}
 
-// Inicializa o bot automaticamente ao executar o script
-startBot();
-
-module.exports = { startBot, stopBot };
+module.exports = { startBot, stopBot, restartBot };
