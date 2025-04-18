@@ -1,10 +1,10 @@
 const qrcode = require('qrcode-terminal');
 const { Client, LocalAuth } = require('whatsapp-web.js');
 
-let client;
-let botRunning = false; 
+let client; // Variável para armazenar a instância do cliente
+let botRunning = false; // Variável para controlar o estado do bot
 
-
+// Função para inicializar o bot
 function startBot() {
   if (botRunning) {
     console.log('⚠️ O chatbot já está em execução.');
@@ -27,11 +27,11 @@ function startBot() {
   });
 
   client.on('ready', () => {
-    console.log('🤖 Tudo certo! WhatsApp conectado.');
+    console.log('🤖 Bot conectado e pronto para uso!');
   });
 
   client.on('message', async (msg) => {
-       if (msg.body.match(/(menu|Menu|dia|tarde|noite|oi|Oi|Olá|olá|ola|Ola)/i) && msg.from.endsWith('@c.us')) {
+    if (msg.body.match(/(menu|Menu|dia|tarde|noite|oi|Oi|Olá|olá|ola|Ola)/i) && msg.from.endsWith('@c.us')) {
         const chat = await msg.getChat();
 
         await delay(3000); // Delay de 3 segundos
@@ -175,9 +175,15 @@ function startBot() {
     }
   });
 
+  client.on('disconnected', (reason) => {
+    console.log(`❌ Bot desconectado. Motivo: ${reason}`);
+    botRunning = false;
+  });
+
   client.initialize();
 }
 
+// Função para parar o bot
 function stopBot() {
   if (!botRunning) {
     console.log('⚠️ O chatbot já está parado.');
@@ -198,12 +204,18 @@ function stopBot() {
       });
   }
 }
+
+// Função para reiniciar o bot
 function restartBot() {
   console.log('🔄 Reiniciando o chatbot...');
   stopBot();
   setTimeout(() => {
     startBot();
-  }, 1000); 
+  }, 1000); // Delay de 1 segundo para garantir que o cliente seja destruído antes de reiniciar
 }
 
+// Inicializa o bot automaticamente ao executar o script
+startBot();
+
+// Exporta as funções para controle externo, se necessário
 module.exports = { startBot, stopBot, restartBot };
