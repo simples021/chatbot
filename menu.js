@@ -1,5 +1,5 @@
 const readline = require('readline');
-const { startBot, stopBot, restartBot } = require('./chatbot'); 
+const { exec } = require('child_process');
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -8,9 +8,9 @@ const rl = readline.createInterface({
 
 function showMenu() {
   console.log('\n🌟 === Menu do Chatbot === 🌟');
-  console.log('1️⃣  Iniciar o chatbot (start) 🤖');
-  console.log('2️⃣  Parar o chatbot (stop) 🛑');
-  console.log('3️⃣  Reiniciar o chatbot (restart) 🔄');
+  console.log('1️⃣  Iniciar o chatbot 🤖');
+  console.log('2️⃣  Parar o chatbot 🛑');
+  console.log('3️⃣  Reiniciar o chatbot 🔄');
   console.log('4️⃣  Sair 🚪');
   console.log('============================\n');
 }
@@ -18,16 +18,34 @@ function showMenu() {
 function handleMenuOption(option) {
   switch (option) {
     case '1':
-      console.log('🤖 Comando: start');
-      startBot(); 
+      console.log('🤖 Iniciando o chatbot...');
+      exec('pm2 start chatbot', (err, stdout, stderr) => {
+        if (err) {
+          console.error('❌ Erro ao iniciar o chatbot:', err.message);
+          return;
+        }
+        console.log(stdout || stderr);
+      });
       break;
     case '2':
-      console.log('🛑 Comando: stop');
-      stopBot(); 
+      console.log('🛑 Parando o chatbot...');
+      exec('pm2 stop chatbot', (err, stdout, stderr) => {
+        if (err) {
+          console.error('❌ Erro ao parar o chatbot:', err.message);
+          return;
+        }
+        console.log(stdout || stderr);
+      });
       break;
     case '3':
-      console.log('🔄 Comando: restart');
-      restartBot(); 
+      console.log('🔄 Reiniciando o chatbot...');
+      exec('pm2 restart chatbot', (err, stdout, stderr) => {
+        if (err) {
+          console.error('❌ Erro ao reiniciar o chatbot:', err.message);
+          return;
+        }
+        console.log(stdout || stderr);
+      });
       break;
     case '4':
       console.log('🚪 Saindo... Até logo! 👋');
@@ -43,7 +61,7 @@ function main() {
   showMenu();
   rl.question('👉 Escolha uma opção: ', (option) => {
     handleMenuOption(option);
-    main(); 
+    main(); // Mostra o menu novamente após a escolha
   });
 }
 
